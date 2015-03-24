@@ -11,7 +11,7 @@ var recursiveNameGenerator = function () {
 		names.shift();
 	}
 	el.textContent = names.join("\n\n");
-	setTimeout(recursiveNameGenerator, 1000);
+	setTimeout(recursiveNameGenerator, 2000);
 };
 
 recursiveNameGenerator();
