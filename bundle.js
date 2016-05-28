@@ -1,13 +1,21 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-var words = require('./words.json');
-var sample = require('lodash/collection/sample');
+var namer = require('metal-name');
 
-module.exports = function () {
-	return sample(words.part1) + ' ' + sample(words.part2);
+var el = document.getElementById('results');
+
+var names = [];
+
+var recursiveNameGenerator = function () {
+	names.push(namer());
+	if (names.length > 10) {
+		names.shift();
+	}
+	el.textContent = names.join("\n\n");
+	setTimeout(recursiveNameGenerator, 2000);
 };
 
-},{"./words.json":26,"lodash/collection/sample":2}],2:[function(require,module,exports){
+recursiveNameGenerator();
+},{"metal-name":25}],2:[function(require,module,exports){
 var baseRandom = require('../internal/baseRandom'),
     isIterateeCall = require('../internal/isIterateeCall'),
     toArray = require('../lang/toArray'),
@@ -59,7 +67,7 @@ function sample(collection, n, guard) {
 
 module.exports = sample;
 
-},{"../internal/baseRandom":5,"../internal/isIterateeCall":12,"../internal/toIterable":16,"../lang/toArray":21}],3:[function(require,module,exports){
+},{"../internal/baseRandom":5,"../internal/isIterateeCall":11,"../internal/toIterable":15,"../lang/toArray":21}],3:[function(require,module,exports){
 /**
  * Copies the values of `source` to `array`.
  *
@@ -98,11 +106,9 @@ function baseProperty(key) {
 module.exports = baseProperty;
 
 },{}],5:[function(require,module,exports){
-/** Native method references. */
-var floor = Math.floor;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeRandom = Math.random;
+var nativeFloor = Math.floor,
+    nativeRandom = Math.random;
 
 /**
  * The base implementation of `_.random` without support for argument juggling
@@ -114,30 +120,12 @@ var nativeRandom = Math.random;
  * @returns {number} Returns the random number.
  */
 function baseRandom(min, max) {
-  return min + floor(nativeRandom() * (max - min + 1));
+  return min + nativeFloor(nativeRandom() * (max - min + 1));
 }
 
 module.exports = baseRandom;
 
 },{}],6:[function(require,module,exports){
-/**
- * Converts `value` to a string if it's not one. An empty string is returned
- * for `null` or `undefined` values.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {string} Returns the string.
- */
-function baseToString(value) {
-  if (typeof value == 'string') {
-    return value;
-  }
-  return value == null ? '' : (value + '');
-}
-
-module.exports = baseToString;
-
-},{}],7:[function(require,module,exports){
 /**
  * The base implementation of `_.values` and `_.valuesIn` which creates an
  * array of `object` property values corresponding to the property names
@@ -161,7 +149,7 @@ function baseValues(object, props) {
 
 module.exports = baseValues;
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var baseProperty = require('./baseProperty');
 
 /**
@@ -178,7 +166,7 @@ var getLength = baseProperty('length');
 
 module.exports = getLength;
 
-},{"./baseProperty":4}],9:[function(require,module,exports){
+},{"./baseProperty":4}],8:[function(require,module,exports){
 var isNative = require('../lang/isNative');
 
 /**
@@ -196,7 +184,7 @@ function getNative(object, key) {
 
 module.exports = getNative;
 
-},{"../lang/isNative":19}],10:[function(require,module,exports){
+},{"../lang/isNative":19}],9:[function(require,module,exports){
 var getLength = require('./getLength'),
     isLength = require('./isLength');
 
@@ -213,12 +201,12 @@ function isArrayLike(value) {
 
 module.exports = isArrayLike;
 
-},{"./getLength":8,"./isLength":13}],11:[function(require,module,exports){
+},{"./getLength":7,"./isLength":12}],10:[function(require,module,exports){
 /** Used to detect unsigned integer values. */
 var reIsUint = /^\d+$/;
 
 /**
- * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -239,7 +227,7 @@ function isIndex(value, length) {
 
 module.exports = isIndex;
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var isArrayLike = require('./isArrayLike'),
     isIndex = require('./isIndex'),
     isObject = require('../lang/isObject');
@@ -269,9 +257,9 @@ function isIterateeCall(value, index, object) {
 
 module.exports = isIterateeCall;
 
-},{"../lang/isObject":20,"./isArrayLike":10,"./isIndex":11}],13:[function(require,module,exports){
+},{"../lang/isObject":20,"./isArrayLike":9,"./isIndex":10}],12:[function(require,module,exports){
 /**
- * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -279,7 +267,7 @@ var MAX_SAFE_INTEGER = 9007199254740991;
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -291,7 +279,7 @@ function isLength(value) {
 
 module.exports = isLength;
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * Checks if `value` is object-like.
  *
@@ -305,7 +293,7 @@ function isObjectLike(value) {
 
 module.exports = isObjectLike;
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
     isIndex = require('./isIndex'),
@@ -348,7 +336,7 @@ function shimKeys(object) {
 
 module.exports = shimKeys;
 
-},{"../lang/isArguments":17,"../lang/isArray":18,"../object/keysIn":23,"./isIndex":11,"./isLength":13}],16:[function(require,module,exports){
+},{"../lang/isArguments":16,"../lang/isArray":17,"../object/keysIn":23,"./isIndex":10,"./isLength":12}],15:[function(require,module,exports){
 var isArrayLike = require('./isArrayLike'),
     isObject = require('../lang/isObject'),
     values = require('../object/values');
@@ -372,21 +360,18 @@ function toIterable(value) {
 
 module.exports = toIterable;
 
-},{"../lang/isObject":20,"../object/values":24,"./isArrayLike":10}],17:[function(require,module,exports){
+},{"../lang/isObject":20,"../object/values":24,"./isArrayLike":9}],16:[function(require,module,exports){
 var isArrayLike = require('../internal/isArrayLike'),
     isObjectLike = require('../internal/isObjectLike');
-
-/** `Object#toString` result references. */
-var argsTag = '[object Arguments]';
 
 /** Used for native method references. */
 var objectProto = Object.prototype;
 
-/**
- * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
- * of values.
- */
-var objToString = objectProto.toString;
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Native method references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
 
 /**
  * Checks if `value` is classified as an `arguments` object.
@@ -405,12 +390,13 @@ var objToString = objectProto.toString;
  * // => false
  */
 function isArguments(value) {
-  return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
+  return isObjectLike(value) && isArrayLike(value) &&
+    hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
 }
 
 module.exports = isArguments;
 
-},{"../internal/isArrayLike":10,"../internal/isObjectLike":14}],18:[function(require,module,exports){
+},{"../internal/isArrayLike":9,"../internal/isObjectLike":13}],17:[function(require,module,exports){
 var getNative = require('../internal/getNative'),
     isLength = require('../internal/isLength'),
     isObjectLike = require('../internal/isObjectLike');
@@ -422,7 +408,7 @@ var arrayTag = '[object Array]';
 var objectProto = Object.prototype;
 
 /**
- * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objToString = objectProto.toString;
@@ -452,12 +438,49 @@ var isArray = nativeIsArray || function(value) {
 
 module.exports = isArray;
 
-},{"../internal/getNative":9,"../internal/isLength":13,"../internal/isObjectLike":14}],19:[function(require,module,exports){
-var escapeRegExp = require('../string/escapeRegExp'),
-    isObjectLike = require('../internal/isObjectLike');
+},{"../internal/getNative":8,"../internal/isLength":12,"../internal/isObjectLike":13}],18:[function(require,module,exports){
+var isObject = require('./isObject');
 
 /** `Object#toString` result references. */
 var funcTag = '[object Function]';
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objToString = objectProto.toString;
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in older versions of Chrome and Safari which return 'function' for regexes
+  // and Safari 8 which returns 'object' for typed array constructors.
+  return isObject(value) && objToString.call(value) == funcTag;
+}
+
+module.exports = isFunction;
+
+},{"./isObject":20}],19:[function(require,module,exports){
+var isFunction = require('./isFunction'),
+    isObjectLike = require('../internal/isObjectLike');
 
 /** Used to detect host constructors (Safari > 5). */
 var reIsHostCtor = /^\[object .+?Constructor\]$/;
@@ -471,15 +494,9 @@ var fnToString = Function.prototype.toString;
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
 
-/**
- * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
- * of values.
- */
-var objToString = objectProto.toString;
-
 /** Used to detect if a method is native. */
 var reIsNative = RegExp('^' +
-  escapeRegExp(fnToString.call(hasOwnProperty))
+  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
   .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 );
 
@@ -503,7 +520,7 @@ function isNative(value) {
   if (value == null) {
     return false;
   }
-  if (objToString.call(value) == funcTag) {
+  if (isFunction(value)) {
     return reIsNative.test(fnToString.call(value));
   }
   return isObjectLike(value) && reIsHostCtor.test(value);
@@ -511,7 +528,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{"../internal/isObjectLike":14,"../string/escapeRegExp":25}],20:[function(require,module,exports){
+},{"../internal/isObjectLike":13,"./isFunction":18}],20:[function(require,module,exports){
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
@@ -575,7 +592,7 @@ function toArray(value) {
 
 module.exports = toArray;
 
-},{"../internal/arrayCopy":3,"../internal/getLength":8,"../internal/isLength":13,"../object/values":24}],22:[function(require,module,exports){
+},{"../internal/arrayCopy":3,"../internal/getLength":7,"../internal/isLength":12,"../object/values":24}],22:[function(require,module,exports){
 var getNative = require('../internal/getNative'),
     isArrayLike = require('../internal/isArrayLike'),
     isObject = require('../lang/isObject'),
@@ -588,7 +605,7 @@ var nativeKeys = getNative(Object, 'keys');
  * Creates an array of the own enumerable property names of `object`.
  *
  * **Note:** Non-object values are coerced to objects. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.keys)
+ * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
  * for more details.
  *
  * @static
@@ -612,7 +629,7 @@ var nativeKeys = getNative(Object, 'keys');
  * // => ['0', '1']
  */
 var keys = !nativeKeys ? shimKeys : function(object) {
-  var Ctor = object == null ? null : object.constructor;
+  var Ctor = object == null ? undefined : object.constructor;
   if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
       (typeof object != 'function' && isArrayLike(object))) {
     return shimKeys(object);
@@ -622,7 +639,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"../internal/getNative":9,"../internal/isArrayLike":10,"../internal/shimKeys":15,"../lang/isObject":20}],23:[function(require,module,exports){
+},{"../internal/getNative":8,"../internal/isArrayLike":9,"../internal/shimKeys":14,"../lang/isObject":20}],23:[function(require,module,exports){
 var isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
     isIndex = require('../internal/isIndex'),
@@ -688,7 +705,7 @@ function keysIn(object) {
 
 module.exports = keysIn;
 
-},{"../internal/isIndex":11,"../internal/isLength":13,"../lang/isArguments":17,"../lang/isArray":18,"../lang/isObject":20}],24:[function(require,module,exports){
+},{"../internal/isIndex":10,"../internal/isLength":12,"../lang/isArguments":16,"../lang/isArray":17,"../lang/isObject":20}],24:[function(require,module,exports){
 var baseValues = require('../internal/baseValues'),
     keys = require('./keys');
 
@@ -723,41 +740,16 @@ function values(object) {
 
 module.exports = values;
 
-},{"../internal/baseValues":7,"./keys":22}],25:[function(require,module,exports){
-var baseToString = require('../internal/baseToString');
+},{"../internal/baseValues":6,"./keys":22}],25:[function(require,module,exports){
+'use strict';
+var words = require('./words.json');
+var sample = require('lodash/collection/sample');
 
-/**
- * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
- * In addition to special characters the forward slash is escaped to allow for
- * easier `eval` use and `Function` compilation.
- */
-var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
-    reHasRegExpChars = RegExp(reRegExpChars.source);
+module.exports = function () {
+	return sample(words.part1) + ' ' + sample(words.part2);
+};
 
-/**
- * Escapes the `RegExp` special characters "\", "/", "^", "$", ".", "|", "?",
- * "*", "+", "(", ")", "[", "]", "{" and "}" in `string`.
- *
- * @static
- * @memberOf _
- * @category String
- * @param {string} [string=''] The string to escape.
- * @returns {string} Returns the escaped string.
- * @example
- *
- * _.escapeRegExp('[lodash](https://lodash.com/)');
- * // => '\[lodash\]\(https:\/\/lodash\.com\/\)'
- */
-function escapeRegExp(string) {
-  string = baseToString(string);
-  return (string && reHasRegExpChars.test(string))
-    ? string.replace(reRegExpChars, '\\$&')
-    : string;
-}
-
-module.exports = escapeRegExp;
-
-},{"../internal/baseToString":6}],26:[function(require,module,exports){
+},{"./words.json":26,"lodash/collection/sample":2}],26:[function(require,module,exports){
 module.exports={
   "part1": [
     "44",
@@ -929,6 +921,7 @@ module.exports={
     "Blood",
     "Blue",
     "Bullet",
+    "Cabbage",
     "Cadaver",
     "Carnage",
     "Chaos",
@@ -1044,21 +1037,4 @@ module.exports={
   ]
 }
 
-},{}],27:[function(require,module,exports){
-var namer = require('metal-name');
-
-var el = document.getElementById('results');
-
-var names = [];
-
-var recursiveNameGenerator = function () {
-	names.push(namer());
-	if (names.length > 10) {
-		names.shift();
-	}
-	el.textContent = names.join("\n\n");
-	setTimeout(recursiveNameGenerator, 2000);
-};
-
-recursiveNameGenerator();
-},{"metal-name":1}]},{},[27]);
+},{}]},{},[1]);
