@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var namer = require('metal-name');
 
 var el = document.getElementById('results');
@@ -15,117 +15,66 @@ var recursiveNameGenerator = function () {
 };
 
 recursiveNameGenerator();
-},{"metal-name":25}],2:[function(require,module,exports){
-var baseRandom = require('../internal/baseRandom'),
-    isIterateeCall = require('../internal/isIterateeCall'),
-    toArray = require('../lang/toArray'),
-    toIterable = require('../internal/toIterable');
+},{"metal-name":3}],2:[function(require,module,exports){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
 
-/* Native method references for those with the same name as other `lodash` methods. */
-var nativeMin = Math.min;
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]';
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
 
 /**
- * Gets a random element or `n` random elements from a collection.
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
  *
- * @static
- * @memberOf _
- * @category Collection
- * @param {Array|Object|string} collection The collection to sample.
- * @param {number} [n] The number of elements to sample.
- * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
- * @returns {*} Returns the random sample(s).
- * @example
- *
- * _.sample([1, 2, 3, 4]);
- * // => 2
- *
- * _.sample([1, 2, 3, 4], 2);
- * // => [3, 1]
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
  */
-function sample(collection, n, guard) {
-  if (guard ? isIterateeCall(collection, n, guard) : n == null) {
-    collection = toIterable(collection);
-    var length = collection.length;
-    return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
-  }
+function arrayMap(array, iteratee) {
   var index = -1,
-      result = toArray(collection),
-      length = result.length,
-      lastIndex = length - 1;
+      length = array ? array.length : 0,
+      result = Array(length);
 
-  n = nativeMin(n < 0 ? 0 : (+n || 0), length);
-  while (++index < n) {
-    var rand = baseRandom(index, lastIndex),
-        value = result[rand];
-
-    result[rand] = result[index];
-    result[index] = value;
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
   }
-  result.length = n;
   return result;
 }
 
-module.exports = sample;
-
-},{"../internal/baseRandom":5,"../internal/isIterateeCall":11,"../internal/toIterable":15,"../lang/toArray":21}],3:[function(require,module,exports){
 /**
- * Copies the values of `source` to `array`.
+ * The base implementation of `_.times` without support for iteratee shorthands
+ * or max array length checks.
  *
  * @private
- * @param {Array} source The array to copy values from.
- * @param {Array} [array=[]] The array to copy values to.
- * @returns {Array} Returns `array`.
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
  */
-function arrayCopy(source, array) {
+function baseTimes(n, iteratee) {
   var index = -1,
-      length = source.length;
+      result = Array(n);
 
-  array || (array = Array(length));
-  while (++index < length) {
-    array[index] = source[index];
+  while (++index < n) {
+    result[index] = iteratee(index);
   }
-  return array;
+  return result;
 }
 
-module.exports = arrayCopy;
-
-},{}],4:[function(require,module,exports){
-/**
- * The base implementation of `_.property` without support for deep paths.
- *
- * @private
- * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new function.
- */
-function baseProperty(key) {
-  return function(object) {
-    return object == null ? undefined : object[key];
-  };
-}
-
-module.exports = baseProperty;
-
-},{}],5:[function(require,module,exports){
-/* Native method references for those with the same name as other `lodash` methods. */
-var nativeFloor = Math.floor,
-    nativeRandom = Math.random;
-
-/**
- * The base implementation of `_.random` without support for argument juggling
- * and returning floating-point numbers.
- *
- * @private
- * @param {number} min The minimum possible value.
- * @param {number} max The maximum possible value.
- * @returns {number} Returns the random number.
- */
-function baseRandom(min, max) {
-  return min + nativeFloor(nativeRandom() * (max - min + 1));
-}
-
-module.exports = baseRandom;
-
-},{}],6:[function(require,module,exports){
 /**
  * The base implementation of `_.values` and `_.valuesIn` which creates an
  * array of `object` property values corresponding to the property names
@@ -137,79 +86,105 @@ module.exports = baseRandom;
  * @returns {Object} Returns the array of property values.
  */
 function baseValues(object, props) {
-  var index = -1,
-      length = props.length,
-      result = Array(length);
+  return arrayMap(props, function(key) {
+    return object[key];
+  });
+}
 
-  while (++index < length) {
-    result[index] = object[props[index]];
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeFloor = Math.floor,
+    nativeKeys = overArg(Object.keys, Object),
+    nativeRandom = Math.random;
+
+/**
+ * Creates an array of the enumerable property names of the array-like `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @param {boolean} inherited Specify returning inherited property names.
+ * @returns {Array} Returns the array of property names.
+ */
+function arrayLikeKeys(value, inherited) {
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  // Safari 9 makes `arguments.length` enumerable in strict mode.
+  var result = (isArray(value) || isArguments(value))
+    ? baseTimes(value.length, String)
+    : [];
+
+  var length = result.length,
+      skipIndexes = !!length;
+
+  for (var key in value) {
+    if ((inherited || hasOwnProperty.call(value, key)) &&
+        !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
+      result.push(key);
+    }
   }
   return result;
 }
 
-module.exports = baseValues;
-
-},{}],7:[function(require,module,exports){
-var baseProperty = require('./baseProperty');
-
 /**
- * Gets the "length" property value of `object`.
- *
- * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
- * that affects Safari on at least iOS 8.1-8.3 ARM64.
+ * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
  *
  * @private
  * @param {Object} object The object to query.
- * @returns {*} Returns the "length" value.
+ * @returns {Array} Returns the array of property names.
  */
-var getLength = baseProperty('length');
-
-module.exports = getLength;
-
-},{"./baseProperty":4}],8:[function(require,module,exports){
-var isNative = require('../lang/isNative');
-
-/**
- * Gets the native function at `key` of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @param {string} key The key of the method to get.
- * @returns {*} Returns the function if it's native, else `undefined`.
- */
-function getNative(object, key) {
-  var value = object == null ? undefined : object[key];
-  return isNative(value) ? value : undefined;
+function baseKeys(object) {
+  if (!isPrototype(object)) {
+    return nativeKeys(object);
+  }
+  var result = [];
+  for (var key in Object(object)) {
+    if (hasOwnProperty.call(object, key) && key != 'constructor') {
+      result.push(key);
+    }
+  }
+  return result;
 }
 
-module.exports = getNative;
-
-},{"../lang/isNative":19}],9:[function(require,module,exports){
-var getLength = require('./getLength'),
-    isLength = require('./isLength');
-
 /**
- * Checks if `value` is array-like.
+ * The base implementation of `_.random` without support for returning
+ * floating-point numbers.
  *
  * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @param {number} lower The lower bound.
+ * @param {number} upper The upper bound.
+ * @returns {number} Returns the random number.
  */
-function isArrayLike(value) {
-  return value != null && isLength(getLength(value));
+function baseRandom(lower, upper) {
+  return lower + nativeFloor(nativeRandom() * (upper - lower + 1));
 }
-
-module.exports = isArrayLike;
-
-},{"./getLength":7,"./isLength":12}],10:[function(require,module,exports){
-/** Used to detect unsigned integer values. */
-var reIsUint = /^\d+$/;
-
-/**
- * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
- * of an array-like value.
- */
-var MAX_SAFE_INTEGER = 9007199254740991;
 
 /**
  * Checks if `value` is a valid array-like index.
@@ -220,167 +195,57 @@ var MAX_SAFE_INTEGER = 9007199254740991;
  * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
  */
 function isIndex(value, length) {
-  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
   length = length == null ? MAX_SAFE_INTEGER : length;
-  return value > -1 && value % 1 == 0 && value < length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
 }
 
-module.exports = isIndex;
-
-},{}],11:[function(require,module,exports){
-var isArrayLike = require('./isArrayLike'),
-    isIndex = require('./isIndex'),
-    isObject = require('../lang/isObject');
-
 /**
- * Checks if the provided arguments are from an iteratee call.
- *
- * @private
- * @param {*} value The potential iteratee value argument.
- * @param {*} index The potential iteratee index or key argument.
- * @param {*} object The potential iteratee object argument.
- * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
- */
-function isIterateeCall(value, index, object) {
-  if (!isObject(object)) {
-    return false;
-  }
-  var type = typeof index;
-  if (type == 'number'
-      ? (isArrayLike(object) && isIndex(index, object.length))
-      : (type == 'string' && index in object)) {
-    var other = object[index];
-    return value === value ? (value === other) : (other !== other);
-  }
-  return false;
-}
-
-module.exports = isIterateeCall;
-
-},{"../lang/isObject":20,"./isArrayLike":9,"./isIndex":10}],12:[function(require,module,exports){
-/**
- * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
- * of an array-like value.
- */
-var MAX_SAFE_INTEGER = 9007199254740991;
-
-/**
- * Checks if `value` is a valid array-like length.
- *
- * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ * Checks if `value` is likely a prototype object.
  *
  * @private
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
  */
-function isLength(value) {
-  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
 }
 
-module.exports = isLength;
-
-},{}],13:[function(require,module,exports){
 /**
- * Checks if `value` is object-like.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- */
-function isObjectLike(value) {
-  return !!value && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-},{}],14:[function(require,module,exports){
-var isArguments = require('../lang/isArguments'),
-    isArray = require('../lang/isArray'),
-    isIndex = require('./isIndex'),
-    isLength = require('./isLength'),
-    keysIn = require('../object/keysIn');
-
-/** Used for native method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * A fallback implementation of `Object.keys` which creates an array of the
- * own enumerable property names of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- */
-function shimKeys(object) {
-  var props = keysIn(object),
-      propsLength = props.length,
-      length = propsLength && object.length;
-
-  var allowIndexes = !!length && isLength(length) &&
-    (isArray(object) || isArguments(object));
-
-  var index = -1,
-      result = [];
-
-  while (++index < propsLength) {
-    var key = props[index];
-    if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-
-module.exports = shimKeys;
-
-},{"../lang/isArguments":16,"../lang/isArray":17,"../object/keysIn":23,"./isIndex":10,"./isLength":12}],15:[function(require,module,exports){
-var isArrayLike = require('./isArrayLike'),
-    isObject = require('../lang/isObject'),
-    values = require('../object/values');
-
-/**
- * Converts `value` to an array-like object if it's not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Array|Object} Returns the array-like object.
- */
-function toIterable(value) {
-  if (value == null) {
-    return [];
-  }
-  if (!isArrayLike(value)) {
-    return values(value);
-  }
-  return isObject(value) ? value : Object(value);
-}
-
-module.exports = toIterable;
-
-},{"../lang/isObject":20,"../object/values":24,"./isArrayLike":9}],16:[function(require,module,exports){
-var isArrayLike = require('../internal/isArrayLike'),
-    isObjectLike = require('../internal/isObjectLike');
-
-/** Used for native method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Native method references. */
-var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-/**
- * Checks if `value` is classified as an `arguments` object.
+ * Gets a random element from `collection`.
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to sample.
+ * @returns {*} Returns the random element.
+ * @example
+ *
+ * _.sample([1, 2, 3, 4]);
+ * // => 2
+ */
+function sample(collection) {
+  var array = isArrayLike(collection) ? collection : values(collection),
+      length = array.length;
+
+  return length > 0 ? array[baseRandom(0, length - 1)] : undefined;
+}
+
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ *  else `false`.
  * @example
  *
  * _.isArguments(function() { return arguments; }());
@@ -390,77 +255,103 @@ var propertyIsEnumerable = objectProto.propertyIsEnumerable;
  * // => false
  */
 function isArguments(value) {
-  return isObjectLike(value) && isArrayLike(value) &&
-    hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
 }
-
-module.exports = isArguments;
-
-},{"../internal/isArrayLike":9,"../internal/isObjectLike":13}],17:[function(require,module,exports){
-var getNative = require('../internal/getNative'),
-    isLength = require('../internal/isLength'),
-    isObjectLike = require('../internal/isObjectLike');
-
-/** `Object#toString` result references. */
-var arrayTag = '[object Array]';
-
-/** Used for native method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
- * of values.
- */
-var objToString = objectProto.toString;
-
-/* Native method references for those with the same name as other `lodash` methods. */
-var nativeIsArray = getNative(Array, 'isArray');
 
 /**
  * Checks if `value` is classified as an `Array` object.
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
  * @example
  *
  * _.isArray([1, 2, 3]);
  * // => true
  *
- * _.isArray(function() { return arguments; }());
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
  * // => false
  */
-var isArray = nativeIsArray || function(value) {
-  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
-};
-
-module.exports = isArray;
-
-},{"../internal/getNative":8,"../internal/isLength":12,"../internal/isObjectLike":13}],18:[function(require,module,exports){
-var isObject = require('./isObject');
-
-/** `Object#toString` result references. */
-var funcTag = '[object Function]';
-
-/** Used for native method references. */
-var objectProto = Object.prototype;
+var isArray = Array.isArray;
 
 /**
- * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
- * of values.
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
  */
-var objToString = objectProto.toString;
+function isArrayLike(value) {
+  return value != null && isLength(value.length) && !isFunction(value);
+}
+
+/**
+ * This method is like `_.isArrayLike` except that it also checks if `value`
+ * is an object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array-like object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArrayLikeObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLikeObject(document.body.children);
+ * // => true
+ *
+ * _.isArrayLikeObject('abc');
+ * // => false
+ *
+ * _.isArrayLikeObject(_.noop);
+ * // => false
+ */
+function isArrayLikeObject(value) {
+  return isObjectLike(value) && isArrayLike(value);
+}
 
 /**
  * Checks if `value` is classified as a `Function` object.
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -471,70 +362,50 @@ var objToString = objectProto.toString;
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in older versions of Chrome and Safari which return 'function' for regexes
-  // and Safari 8 which returns 'object' for typed array constructors.
-  return isObject(value) && objToString.call(value) == funcTag;
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
 }
 
-module.exports = isFunction;
-
-},{"./isObject":20}],19:[function(require,module,exports){
-var isFunction = require('./isFunction'),
-    isObjectLike = require('../internal/isObjectLike');
-
-/** Used to detect host constructors (Safari > 5). */
-var reIsHostCtor = /^\[object .+?Constructor\]$/;
-
-/** Used for native method references. */
-var objectProto = Object.prototype;
-
-/** Used to resolve the decompiled source of functions. */
-var fnToString = Function.prototype.toString;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Used to detect if a method is native. */
-var reIsNative = RegExp('^' +
-  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
-  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-);
-
 /**
- * Checks if `value` is a native function.
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
  * @example
  *
- * _.isNative(Array.prototype.push);
+ * _.isLength(3);
  * // => true
  *
- * _.isNative(_);
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
  * // => false
  */
-function isNative(value) {
-  if (value == null) {
-    return false;
-  }
-  if (isFunction(value)) {
-    return reIsNative.test(fnToString.call(value));
-  }
-  return isObjectLike(value) && reIsHostCtor.test(value);
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
 }
 
-module.exports = isNative;
-
-},{"../internal/isObjectLike":13,"./isFunction":18}],20:[function(require,module,exports){
 /**
- * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is an object, else `false`.
@@ -546,69 +417,54 @@ module.exports = isNative;
  * _.isObject([1, 2, 3]);
  * // => true
  *
- * _.isObject(1);
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
  * // => false
  */
 function isObject(value) {
-  // Avoid a V8 JIT bug in Chrome 19-20.
-  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
 }
 
-module.exports = isObject;
-
-},{}],21:[function(require,module,exports){
-var arrayCopy = require('../internal/arrayCopy'),
-    getLength = require('../internal/getLength'),
-    isLength = require('../internal/isLength'),
-    values = require('../object/values');
-
 /**
- * Converts `value` to an array.
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
- * @param {*} value The value to convert.
- * @returns {Array} Returns the converted array.
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  * @example
  *
- * (function() {
- *   return _.toArray(arguments).slice(1);
- * }(1, 2, 3));
- * // => [2, 3]
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
  */
-function toArray(value) {
-  var length = value ? getLength(value) : 0;
-  if (!isLength(length)) {
-    return values(value);
-  }
-  if (!length) {
-    return [];
-  }
-  return arrayCopy(value);
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
 }
-
-module.exports = toArray;
-
-},{"../internal/arrayCopy":3,"../internal/getLength":7,"../internal/isLength":12,"../object/values":24}],22:[function(require,module,exports){
-var getNative = require('../internal/getNative'),
-    isArrayLike = require('../internal/isArrayLike'),
-    isObject = require('../lang/isObject'),
-    shimKeys = require('../internal/shimKeys');
-
-/* Native method references for those with the same name as other `lodash` methods. */
-var nativeKeys = getNative(Object, 'keys');
 
 /**
  * Creates an array of the own enumerable property names of `object`.
  *
  * **Note:** Non-object values are coerced to objects. See the
- * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+ * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
  * for more details.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Object
  * @param {Object} object The object to query.
@@ -628,93 +484,17 @@ var nativeKeys = getNative(Object, 'keys');
  * _.keys('hi');
  * // => ['0', '1']
  */
-var keys = !nativeKeys ? shimKeys : function(object) {
-  var Ctor = object == null ? undefined : object.constructor;
-  if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-      (typeof object != 'function' && isArrayLike(object))) {
-    return shimKeys(object);
-  }
-  return isObject(object) ? nativeKeys(object) : [];
-};
-
-module.exports = keys;
-
-},{"../internal/getNative":8,"../internal/isArrayLike":9,"../internal/shimKeys":14,"../lang/isObject":20}],23:[function(require,module,exports){
-var isArguments = require('../lang/isArguments'),
-    isArray = require('../lang/isArray'),
-    isIndex = require('../internal/isIndex'),
-    isLength = require('../internal/isLength'),
-    isObject = require('../lang/isObject');
-
-/** Used for native method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * Creates an array of the own and inherited enumerable property names of `object`.
- *
- * **Note:** Non-object values are coerced to objects.
- *
- * @static
- * @memberOf _
- * @category Object
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- *   this.b = 2;
- * }
- *
- * Foo.prototype.c = 3;
- *
- * _.keysIn(new Foo);
- * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
- */
-function keysIn(object) {
-  if (object == null) {
-    return [];
-  }
-  if (!isObject(object)) {
-    object = Object(object);
-  }
-  var length = object.length;
-  length = (length && isLength(length) &&
-    (isArray(object) || isArguments(object)) && length) || 0;
-
-  var Ctor = object.constructor,
-      index = -1,
-      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
-      result = Array(length),
-      skipIndexes = length > 0;
-
-  while (++index < length) {
-    result[index] = (index + '');
-  }
-  for (var key in object) {
-    if (!(skipIndexes && isIndex(key, length)) &&
-        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-      result.push(key);
-    }
-  }
-  return result;
+function keys(object) {
+  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
 }
 
-module.exports = keysIn;
-
-},{"../internal/isIndex":10,"../internal/isLength":12,"../lang/isArguments":16,"../lang/isArray":17,"../lang/isObject":20}],24:[function(require,module,exports){
-var baseValues = require('../internal/baseValues'),
-    keys = require('./keys');
-
 /**
- * Creates an array of the own enumerable property values of `object`.
+ * Creates an array of the own enumerable string keyed property values of `object`.
  *
  * **Note:** Non-object values are coerced to objects.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Object
  * @param {Object} object The object to query.
@@ -735,30 +515,32 @@ var baseValues = require('../internal/baseValues'),
  * // => ['h', 'i']
  */
 function values(object) {
-  return baseValues(object, keys(object));
+  return object ? baseValues(object, keys(object)) : [];
 }
 
-module.exports = values;
+module.exports = sample;
 
-},{"../internal/baseValues":6,"./keys":22}],25:[function(require,module,exports){
-'use strict';
-var words = require('./words.json');
-var sample = require('lodash/collection/sample');
+},{}],3:[function(require,module,exports){
+'use strict'
+var words = require('./words.json')
+var sample = require('lodash.sample')
 
-module.exports = function () {
-	return sample(words.part1) + ' ' + sample(words.part2);
-};
+module.exports = function (options = {}) {
+  if (!options.fragment) {
+    return `${sample(words.start)} ${sample(words.end)}`
+  }
+  return sample(words[options.fragment])
+}
 
-},{"./words.json":26,"lodash/collection/sample":2}],26:[function(require,module,exports){
+},{"./words.json":4,"lodash.sample":2}],4:[function(require,module,exports){
 module.exports={
-  "part1": [
-    "44",
+  "start": [
     "666",
-    "667",
     "Alice",
     "Alien",
     "Angel",
     "Angel of the",
+    "Ashes of the",
     "Atom",
     "Atomic",
     "Bad",
@@ -766,13 +548,17 @@ module.exports={
     "Battle",
     "Beastial",
     "Beasts of the",
+    "Beyond",
     "Black",
     "Blasphemous",
     "Bleeding",
-    "Blue",
+    "Blitz",
     "Blood",
     "Bloody",
+    "Blue",
     "Brain",
+    "Breathing",
+    "Burning",
     "Cannibal",
     "Captain",
     "Church of the",
@@ -794,50 +580,66 @@ module.exports={
     "Destiny's",
     "Deviant",
     "Devil",
+    "Diamond",
     "Diseased",
     "Disfigured",
     "Disturbed",
     "Drowning",
     "Dying",
     "Electric",
+    "Elemental",
     "Enter",
     "Enthralled",
     "Evil",
-    "Fear",
+    "Faith",
     "Fear of the",
+    "Fear",
     "Fist of the",
     "Flames of the",
     "Full",
+    "General",
     "Goat-faced",
     "God of the",
-    "Gods of the",
     "Goddess of the",
+    "Gods of the",
+    "Goodbye",
     "Gore",
     "Grave",
     "Great",
     "Grim",
     "Gun",
     "Half",
+    "Hard",
     "Hate",
-    "Hellish",
     "Hazardous",
+    "Head",
     "Heavy",
+    "Hellish",
+    "High",
+    "Hollow",
+    "Holy",
     "Impaled",
     "Infernal",
     "Iron",
     "Judas",
+    "Kick",
     "Killer",
     "Killing",
     "King",
+    "Leaf",
     "Leather",
     "Lecherous",
     "Leprous",
     "Lifeless",
+    "Living",
+    "Lone",
     "Lord",
     "Lucifer's",
     "Machine",
+    "Mahagony",
     "Malicious",
     "Malmsteen's",
+    "Mama's",
     "Maniacal",
     "Maximum",
     "Merciful",
@@ -853,20 +655,27 @@ module.exports={
     "Nocturnal",
     "Nuclear",
     "Obscene",
+    "Obsession",
     "Occult",
     "Ozzy",
     "Pagan",
     "Poisoned",
     "Possessed",
+    "Pray for the",
+    "Praying",
     "Primal",
     "Profane",
-    "Rancid",
+    "Quiet",
     "Rage Against the",
+    "Rancid",
     "Reaper",
     "Red",
+    "Reign of the",
     "Rose",
     "Rotting",
     "Rough",
+    "Running",
+    "Saber",
     "Sacred",
     "Saint",
     "Satanic",
@@ -874,8 +683,10 @@ module.exports={
     "Screaming",
     "Scum of the",
     "Seething",
+    "Shark",
     "Sick",
     "Slaying",
+    "Soul of the",
     "Spinal",
     "Stabbing",
     "Stained",
@@ -884,22 +695,25 @@ module.exports={
     "Suicidal",
     "Sweet",
     "Temple of the",
+    "The Flying",
+    "The Handsome",
     "Toxic",
     "Trapped",
     "Twisted",
     "Unholy",
     "Unmercificul",
-    "Venomous",
     "Vengeful",
+    "Venomous",
     "Vicious",
     "Viking",
     "Vulcanized",
+    "White",
     "Wild",
     "Witch",
     "Wrathful",
     "Zombie"
   ],
-  "part2": [
+  "end": [
     "Abominator",
     "Aeroplane",
     "Agony",
@@ -908,66 +722,83 @@ module.exports={
     "Angel",
     "Angels",
     "Anthrax",
-    "Attila",
     "Anvil",
     "Apocalypse",
     "Apostasy",
+    "Attila",
     "Axe",
-    "Barbarian",
-    "Bang",
     "Baptism",
+    "Barbarian",
+    "Beast",
     "Betrayer",
+    "Beyond",
     "Blitz",
     "Blood",
     "Blue",
     "Bullet",
+    "Butler",
+    "Butterfly",
     "Cabbage",
     "Cadaver",
     "Carnage",
     "Chaos",
     "Church",
+    "Claw",
     "Coffin",
     "Cooper",
     "Corpse",
     "Corrosion",
     "Coven",
+    "Cries",
     "Cruelty",
     "Cthulhu",
     "Cult",
     "Cut",
     "Cyclone",
-    "Death",
     "Daemon",
+    "Death",
     "Demon",
+    "Demons",
     "Destroyer",
     "Destruction",
     "Devil",
     "Digger",
     "Donut",
     "Doom",
+    "Dreams",
     "Enslavement",
     "Entrails",
+    "Eternity",
     "Eulogy",
     "Fate",
     "Fear",
     "Filth",
+    "Flames",
     "Flesh",
     "Funeral",
+    "General",
     "Ghoul",
     "Glory",
     "Goat",
     "God",
-    "Gods",
     "Goddess",
+    "Gods",
     "Gore",
+    "Grave",
+    "Ground",
     "Guns",
     "Hammer",
     "Hearse",
     "Hell",
     "Hoof",
     "Horde",
+    "Horse",
+    "Horses",
+    "Hound",
     "Hunter",
     "Ire",
+    "Island",
+    "Joke",
     "Killer",
     "Krieg",
     "Leviathan",
@@ -976,6 +807,8 @@ module.exports={
     "Lucifer",
     "Machine",
     "Magnum",
+    "Maids",
+    "Malice",
     "Mantis",
     "Massacre",
     "Master",
@@ -983,52 +816,74 @@ module.exports={
     "Messiah",
     "Monsoon",
     "Monster",
+    "Mortis",
     "Murder",
-    "Mutilator",
     "Mutilation",
+    "Mutilator",
     "No More",
     "Poison",
-    "Prophets",
     "Priest",
+    "Prophets",
     "Purple",
+    "Raid",
     "Reaper",
     "Reich",
     "Revenge",
+    "Ringer",
+    "Riot",
+    "Risk",
     "Rite",
     "Rock",
-    "Roses",
+    "Rocks",
     "Rooster",
+    "Roses",
     "Sabbath",
+    "Saber",
     "Satan",
+    "Scream",
     "Serpent",
+    "Shark",
     "Sin",
     "Slaughter",
     "Slave",
     "Smack",
     "Snake",
     "Sorcerer",
+    "Sorrow",
+    "Spirit",
+    "Star",
     "Steel",
-    "Storm",
+    "Steel",
     "Stone",
+    "Storm",
+    "Stuff",
+    "Sun",
+    "Sword",
     "Tank",
+    "Tear",
     "Temple",
     "Thor",
     "Thunder",
+    "Tide",
     "Toad",
     "Tomb",
-    "Transgressor",
     "Transgression",
+    "Transgressor",
     "Trespass",
     "Trouble",
     "Tsunami",
-    "Venom",
+    "Veins",
     "Vengeance",
+    "Venom",
     "Viscosity",
     "Volt",
     "War",
     "Warrior",
     "White",
     "Widow",
+    "Wild",
+    "Wind",
+    "Wing",
     "Witch",
     "Wolf",
     "Worm",

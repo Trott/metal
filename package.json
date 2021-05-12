@@ -1,0 +1,26 @@
+{
+  "name": "metal",
+  "version": "1.0.0",
+  "description": "Endless metal band name generator using [metal-name](https://npmjs.org/package/metal-name).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify index.js -o bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Trott/metal.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Trott/metal/issues"
+  },
+  "homepage": "https://github.com/Trott/metal#readme",
+  "dependencies": {
+    "metal-name": "^2.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^17.0.0"
+  }
+}
