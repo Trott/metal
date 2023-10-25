@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Endless metal band name generator using [metal-name](https://npmjs.org/package/metal-name).",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify index.js -o bundle.js"
+    "build": "esbuild index.js --bundle --minify --outfile=bundle.js"
   },
   "repository": {
     "type": "git",
@@ -18,9 +19,9 @@
   },
   "homepage": "https://github.com/Trott/metal#readme",
   "dependencies": {
-    "metal-name": "^2.0.0"
+    "metal-name": "^3.0.0"
   },
   "devDependencies": {
-    "browserify": "^17.0.0"
+    "esbuild": "^0.19.5"
   }
 }

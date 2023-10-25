@@ -1,4 +1,4 @@
-var namer = require('metal-name');
+import namer from 'metal-name';
 
 var el = document.getElementById('results');
 
